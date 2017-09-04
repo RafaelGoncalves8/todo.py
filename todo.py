@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import sys, getopt
+import sys, argparse
 import os
 
 
@@ -21,7 +21,7 @@ def add(f, item):
 
 def check(f, pk):
     """ checks/unchecks todo item of number pk """
-    numline = int(pk) + 2
+    numline = pk + 2
 
     with open(f, 'r') as readFile:
         lines = readFile.readlines()
@@ -42,7 +42,7 @@ def check(f, pk):
 
 def delete(f, pk):
     """ deletes item of number pk and renumber them """
-    numline = int(pk) + 2
+    numline = pk + 2
     out = []
     i = 3
 
@@ -72,66 +72,62 @@ def new(f, name):
     todo_list(f)
 
 
-def todo(argv):
-    """ argv is the list of command line arguments """
-    f = ""
-    id_item = ""
-    item=""
-    title=""
+def main():
+    """
+    args.f = ""      # file name
+    args.d_item = "" # task to be deleted id
+    args.c_item = "" # task to be checked id
+    args.item=""     # task message
+    args.title=""    # title of todo list
+    """
 
-    try:
-        opts, args = getopt.getopt(argv,"hvf:ln:a:d:x:", ["help","version", "file=","new=","add=","delete","check="])
-    except getopt.GetoptError:
-        print('usage: todo.py -f <file> [command] <arg>')
-        sys.exit(2)
+    parser = argparse.ArgumentParser(description="Simple command line script to\
+                                    create and manage tasks and todo lists.")
 
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            print('Usage: todo.py -f file [options] arg\n')
-            print('Options:')
-            print('-n, --new    Creates the todo named <file> with the header <arg>')
-            print('-l, --list   List items in todo <file>')
-            print('-a, --add    Add the string arg in the <file>')
-            print('-d, --delete Deletes todo item named <arg>')
-            print('-x, --check  Check/uncheck the item number <arg> in file <file>')
-            sys.exit()
+    parser.add_argument("file", metavar="FILE", action='store',
+                        help="todo list file")
 
-        elif opt in ("-v", "--version"):
-            print("todo.py version 0.1")
-            sys.exit()
+    parser.add_argument("-v", "--version", action='version', 
+                        version="%(prog)s.py 0.1  -  cli todo list manager")
+    parser.add_argument("-l", "--list", action='store_true',
+                        help="list the tasks in the todo list")
 
-        elif opt in ("-f", "--file"):
-            f = arg
+    parser.add_argument("-n", "--new", default="TODO", metavar="NAME",action='store',
+                        help="create new todo list with title NAME")
+    parser.add_argument("-a", "--add", metavar="TASK",action='store',
+                        help="add TASK to the todo list")
+    parser.add_argument("-d", "--delete", metavar="TASK", type=int, action='store',
+                        help="delete TASK from the todo list")
+    parser.add_argument("-x", "--check", metavar="N", type=int,action='store',
+                        help="chek/uncheck task number N")
 
-        elif opt in ("-x", "--check") and os.path.isfile(f):
-            id_item = arg
-            check(f, id_item)
-            sys.exit()
+    args = parser.parse_args()
+    f = args.file
 
-        elif opt in ("-a", "--add") and os.path.isfile(f):
-            item = arg
-            add(f, item)
-            sys.exit()
+    if args.list:
+        todo_list(f)
+        sys.exit()
 
-        elif opt in ("-d", "--delete") and os.path.isfile(f):
-            id_item = arg
-            delete(f, id_item)
-            sys.exit()
+    elif args.check  and os.path.isfile(f):
+        check(f, args.check)
+        sys.exit()
 
-        elif opt in ("-l", "--list") and os.path.isfile(f):
-            todo_list(f)
-            sys.exit()
+    elif args.add and os.path.isfile(f):
+        add(f, args.add)
+        sys.exit()
 
-        elif opt in ("-n", "--new") and (not os.path.isfile(f)):
-            title = arg
-            new(f, title)
-            sys.exit()
+    elif args.delete and os.path.isfile(f):
+        delete(f, args.delete)
+        sys.exit()
 
-        else:
-            pass
+    elif args.new:
+        assert not(os.path.isfile(f)), "%s already exists. Choose another file name." % f
+        new(f, args.new)
+        sys.exit()
 
-    print('usage: todo.py -f <file> [command] <arg>')
+    else:
+        pass
 
 
 if __name__ == "__main__":
-    todo(sys.argv[1:])
+    main()
