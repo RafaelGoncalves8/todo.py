@@ -10,7 +10,7 @@ def todo_list(f):
 
 
 def add(f, item):
-    """ appends item in the last line of the file f """
+    """appends item in the last line of the file f """
     with open(f, 'r') as outFile:
         num_lines = sum(1 for file in outFile)
     pk = str(num_lines - 2)
@@ -19,8 +19,30 @@ def add(f, item):
     todo_list(f)
 
 
+def sub(f, pk, msg):
+    """ create subtask of item pk"""
+    # TODO
+    numline = pk + 2
+    out = []
+    i = 3
+
+    with open(f, 'r') as readFile:
+        lines = readFile.readlines()
+
+    [out.append(item) for item in lines[:numline]]
+
+    out.append(line)
+
+    [out.append(item) for item in lines[numline:]]
+
+    with open(f, 'w') as outFile:
+        outFile.writelines([item for item in out])
+
+    todo_list(f)
+
+
 def check(f, pk):
-    """ checks/unchecks todo item of number pk """
+    """checks/unchecks todo item of number pk """
     numline = pk + 2
 
     with open(f, 'r') as readFile:
@@ -79,6 +101,7 @@ def main():
     args.c_item = "" # task to be checked id
     args.item=""     # task message
     args.title=""    # title of todo list
+    args.sub=""      # subtask number
     """
 
     parser = argparse.ArgumentParser(description="Simple command line script to\
