@@ -23,28 +23,6 @@ def add(f, item):
     todo_list(f)
 
 
-def sub(f, pk, msg):
-    """ create subtask of item pk"""
-    # TODO
-    numline = pk + 2
-    out = []
-    i = 3
-
-    with open(f, 'r') as readFile:
-        lines = readFile.readlines()
-
-    [out.append(item) for item in lines[:numline]]
-
-    out.append(line)
-
-    [out.append(item) for item in lines[numline:]]
-
-    with open(f, 'w') as outFile:
-        outFile.writelines([item for item in out])
-
-    todo_list(f)
-
-
 def check(f, pk):
     """checks/unchecks to-do item of number pk """
     numline = pk + 2
@@ -111,11 +89,11 @@ def main():
     parser = argparse.ArgumentParser(description="Simple command line script to\
                                     create and manage tasks and to-do lists.")
 
-    parser.add_argument("file", metavar="FILE", action='store',
-                      help="to-do list file")
+    parser.add_argument("file", metavar="FILE", action='store', default="todo.txt",
+                        nargs='?', help="to-do list file")
 
     parser.add_argument("-v", "--version", action='version', 
-                        version="%(prog)s.py 0.1  -  cli to-do list manager")
+                        version="%(prog)s.py 0.2  -  cli to-do list manager")
     parser.add_argument("-l", "--list", action='store_true',
                         help="list the tasks in the to-do list")
 
