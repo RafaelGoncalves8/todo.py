@@ -90,7 +90,7 @@ def main():
                                     create and manage tasks and to-do lists.")
 
     parser.add_argument("file", metavar="FILE", action='store', default="todo.txt",
-                        nargs='?', help="to-do list file (default 'todo.txt'")
+                        nargs='?', help="to-do list file (default 'todo.txt')")
 
     parser.add_argument("-v", "--version", action='version', 
                         version="%(prog)s.py 0.2  -  cli to-do list manager")
