@@ -5,8 +5,12 @@ import os
 
 
 def todo_list(f):
-    """ shows the content of the todo file named f """
+    """ shows the content of the to-do file named f """
     os.system('cat %s' % f)
+
+
+def edit(f):
+    os.system('$EDITOR %s' % f)
 
 
 def add(f, item):
@@ -42,7 +46,7 @@ def sub(f, pk, msg):
 
 
 def check(f, pk):
-    """checks/unchecks todo item of number pk """
+    """checks/unchecks to-do item of number pk """
     numline = pk + 2
 
     with open(f, 'r') as readFile:
@@ -96,33 +100,35 @@ def new(f, name):
 
 def main():
     """
-    args.f = ""      # file name
-    args.d_item = "" # task to be deleted id
-    args.c_item = "" # task to be checked id
-    args.item=""     # task message
-    args.title=""    # title of todo list
-    args.sub=""      # subtask number
+    f           # file name
+    args.delete # task to be deleted id
+    args.check  # task to be checked id
+    args.add    # task message
+    args.new    # title of to-do list
+    args.sub    # subtask number
     """
 
     parser = argparse.ArgumentParser(description="Simple command line script to\
-                                    create and manage tasks and todo lists.")
+                                    create and manage tasks and to-do lists.")
 
     parser.add_argument("file", metavar="FILE", action='store',
-                        help="todo list file")
+                      help="to-do list file")
 
     parser.add_argument("-v", "--version", action='version', 
-                        version="%(prog)s.py 0.1  -  cli todo list manager")
+                        version="%(prog)s.py 0.1  -  cli to-do list manager")
     parser.add_argument("-l", "--list", action='store_true',
-                        help="list the tasks in the todo list")
+                        help="list the tasks in the to-do list")
 
-    parser.add_argument("-n", "--new", default="TODO", metavar="NAME",action='store',
-                        help="create new todo list with title NAME")
+    parser.add_argument("-n", "--new", default="TO-DO LIST", metavar="NAME",action='store',
+                        help="create new to-do list with title NAME")
     parser.add_argument("-a", "--add", metavar="TASK",action='store',
-                        help="add TASK to the todo list")
+                        help="add TASK to the to-do list")
     parser.add_argument("-d", "--delete", metavar="TASK", type=int, action='store',
-                        help="delete TASK from the todo list")
+                        help="delete TASK from the to-do list")
     parser.add_argument("-x", "--check", metavar="N", type=int,action='store',
                         help="chek/uncheck task number N")
+    parser.add_argument("-e", "--edit", action='store_true', 
+                        help="edit to-do list with default editor")
 
     args = parser.parse_args()
     f = args.file
@@ -141,6 +147,10 @@ def main():
 
     elif args.delete and os.path.isfile(f):
         delete(f, args.delete)
+        sys.exit()
+
+    elif args.edit:
+        edit(f)
         sys.exit()
 
     elif args.new:
